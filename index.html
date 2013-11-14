@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head> 
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+	<title>2013 Colorado flooding before and after  photos - The Denver Post</title> 
+	
+	<style type="text/css">
+		body { margin:0!important; }
+		#mapoverlaytitle h2 { margin:0; font-family:Arial,Helvetica,sans-serif;color:#222;font-size:18px;line-height:18px; }
+		#mapoverlayimage { border: 6px solid #ccc; width: 700px; height: 410px; margin-top:24px;clear:both; }
+		#mapoverlayimage, #container { margin: 0 auto; }	
+		#mapoverlayimage, div#container { text-align: center; font-family: Arial, Helvetica, sans-serif;}	
+	</style>
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="./js/jquery.beforeafter-1.4.min.js"></script>
+	<script type="text/javascript" src="./js/jquery.ui.touch-punch.min.js"></script>
+
+	<script type="text/javascript">
+	
+	function openOverlayWindows(overlayTitle, overlayNum, overlayDate) {
+		var newoverlayhtml = '<div id="container">\n\
+		<div><img alt="before" src="./images/' + overlayNum + '-before.jpg" width="700" height="410" /></div> \n\
+		<div><img alt="after" src="./images/' + overlayNum + '-after.jpg" width="700" height="410" /></div> \n\
+		</div>';
+		
+		$('#mapoverlay').css('display', 'block');
+		$('#mapoverlaytitle').html('<h2>' + overlayTitle + '</h2>');
+		$('#mapoverlayimage').html(newoverlayhtml);
+		$('#mapoverlaydate').html('<p>' + overlayDate + '</p>');
+		$('#container').beforeAfter({
+			animateIntro : true,
+				introDelay : 720,
+				introDuration : 500,
+				showFullLinks : false
+		});
+	}
+	
+	function closeOverlayWindows() {
+		$('#mapoverlay').css('display', 'none');
+	}
+	
+	
+	document.write('<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"><\/script>');
+	
+	function drawGoogleLocationMap(gmaplocations) {
+		
+		var mapZoom = null;
+		
+		var map = new google.maps.Map(document.getElementById('map'), {
+			zoom: 15,
+			disableDefaultUI: true,
+			panControl: false,
+			zoomControl: true,
+			zoomControlOptions: {
+				style:google.maps.ZoomControlStyle.SMALL
+			},
+			mapTypeControl: false,
+			scaleControl: true,
+			streetViewControl: false,
+			overviewMapControl: false,
+			center: new google.maps.LatLng(gmaplocations[0][1], gmaplocations[0][2]),
+			mapTypeId: google.maps.MapTypeId.TERRAIN
+		});
+		
+		var infowindow = new google.maps.InfoWindow({
+			maxWidth: 100
+			});
+	
+		var marker, i;
+	
+		var bounds = new google.maps.LatLngBounds();
+		
+		for (i = 0; i < gmaplocations.length; i++) {
+			
+			var image = {
+				url: 'http://extras.denverpost.com/media/maps/pins/photos-purple.png',
+				size: new google.maps.Size(32, 37),
+				scaledSize: new google.maps.Size(32, 37),
+				origin: new google.maps.Point(0, 0),
+				anchor: new google.maps.Point(16, 37)
+			};
+			
+			var shape = {
+				coord: [1, 1, 1, 32, 37, 32, 32, 1],
+				type: 'poly'
+			};
+			
+			marker = new google.maps.Marker({
+				position: new google.maps.LatLng(gmaplocations[i][1], gmaplocations[i][2]),
+				map: map,
+				icon: image,
+				shape: shape,
+				title: gmaplocations[i][0]
+			});
+			
+			bounds.extend(marker.position);
+	
+			google.maps.event.addListener(marker, 'click', (function(marker, i) {
+				return function() {
+					openOverlayWindows(gmaplocations[i][0], gmaplocations[i][3], gmaplocations[i][4]);
+				}
+			})(marker, i));
+			
+			google.maps.event.addListenerOnce(map, 'bounds_changed', function() { 
+				if (mapZoom != map.getZoom()) { 
+					mapZoom = (map.getZoom()); 
+					map.setZoom(mapZoom); 
+				} 
+			});
+		}
+		map.fitBounds(bounds);
+	}
+	</script>
+          
+          
+</head> 
+<body>
+
+	<div id="mapwrapp" style="width:960px;height:580px">
+ 
+ 		<div id="map" style="top:0px; left: 0px; width: 100%; height: 100%;"></div>
+    	
+    	<div id="mapoverlay" style="position:absolute; top:28px; left:60px; width:835px; height:510px; border:1px solid #888; box-shadow: 8px 8px 12px #666; z-index:7869684;background:#fff;display:none;">
+    		
+    		<div id="overlaytop" style="width:100%;height:28px;margin-top:4px;display:block;clear:both;">
+    		
+    			<div id="mapoverlaytitle" style="width:775px;height:20px;margin:10px 4px 4px 24px;float:left;text-align:center;"></div>
+    			
+    			<div id="mapoverlayclosebtn" style="cursor:pointer;display:block;height:20px;width:20px;margin:4px 6px 4px 2px;font-style:bold;font-size:28px;line-height:20px;font-family:Arial,sans-serif;color:#aaa;float:right;">x</div>
+
+    		</div>
+    		
+			<div id="mapoverlayimage"></div>
+			
+			<div id="mapoverlaydate" style="display:block;height:14px;width:835px;margin:6px 4px 4px;font-style:normal;font-size:14px;line-height:14px;font-family:Arial,sans-serif;color:#888;text-align:center;"></div>
+
+    	</div>
+
+    </div>
+    
+    <script type="text/javascript">
+        var maplocations = [
+            ['37th Street near Riverside in Evans',40.3775626,-104.6837086,'01','Sept. 16, 2013'],
+			['Trailer park near 37th Street, Evans',40.3755626,-104.6817086,'02','Sept. 16, 2013'],
+			['Auto junk yeard near 37th Street, Evans',40.3759626,-104.6761086,'03','Sept. 16, 2013'],
+			['U.S. 34 east of Greeley',40.4045626,-104.6491086,'04','Sept. 16, 2013'],
+			['U.S. 34 east of Greeley and Evans',40.3929626,-104.635386,'05','Sept. 16, 2013'],
+			['County Road 27 1/2 in Milliken',40.3359626,-104.802986,'06','Sept. 16, 2013'],
+			['Flooded area near 27th St, Evans',40.3776626,-104.6867086,'07','Sept. 14, 2013'],
+			['S. County Road 9e outside Loveland',40.3839443,-105.0310092,'08','Sept. 14, 2013'],
+			['U.S. 34 in Big Thompson Canyon',40.4219443,-105.2380092,'09','Sept. 14, 2013'],
+			['U.S. 34 in Big Thompson Canyon',40.4184443,-105.2440092,'10','Sept. 14, 2013'],
+			['U.S. 34 in Big Thompson Canyon',40.4297435,-105.3250092,'11','Sept. 14, 2013'],
+			['Ute Highway and Stone Canyon, Lyons',40.217743,-105.2600092,'12','Sept. 13, 2013'],
+			['Fairgrounds Park, Loveland',40.385643,-105.080693,'13','Sept. 14, 2013']
+			];
+        drawGoogleLocationMap(maplocations);
+	</script>
+
+	<script type="text/javascript">
+		$('#mapoverlayclosebtn').on("click", closeOverlayWindows);
+	</script>
+	
+	
+    </body>
+</html>
